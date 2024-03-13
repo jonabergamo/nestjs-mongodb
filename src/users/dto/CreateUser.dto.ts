@@ -1,9 +1,11 @@
 import { Type } from 'class-transformer';
 import {
   IsBoolean,
+  IsEmail,
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsStrongPassword,
   ValidateNested,
 } from 'class-validator';
 
@@ -25,6 +27,14 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   username: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  readonly email: string;
+
+  @IsNotEmpty()
+  @IsStrongPassword()
+  readonly password: string;
 
   @IsString()
   @IsOptional()

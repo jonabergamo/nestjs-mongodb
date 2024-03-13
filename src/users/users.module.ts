@@ -17,5 +17,9 @@ import {
   ],
   providers: [UsersService],
   controllers: [UsersController],
+  exports: [
+    UsersService,
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+  ],
 })
-export class usersModule {}
+export class UsersModule {}

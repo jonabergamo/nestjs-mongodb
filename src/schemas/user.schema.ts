@@ -1,30 +1,30 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose from 'mongoose';
-import { UserSettings } from './userSettings.schema';
-import { Post } from './postSchema';
+import { Document } from 'mongoose';
+import { hash } from 'bcrypt';
+
+export type UserDocument = User & Document;
 
 @Schema()
 export class User {
-  @Prop({ unique: true, required: true })
+  @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true, unique: true })
   username: string;
 
-  @Prop({ unique: true, required: true })
+  @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ required: true })
-  password?: string;
+  @Prop({ required: true, select: false })
+  password: string;
 
-  @Prop({ required: false })
-  displayName?: string;
-
-  @Prop({ required: false })
-  avatartUrl?: string;
-
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'UserSettings' })
-  settings?: UserSettings;
-
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }] })
-  posts?: Post[];
+  @Prop()
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+
+UserSchema.pre<User>('save', async function (next: () => void) {
+  this.password = await hash(this.password, 10);
+  next();
+});

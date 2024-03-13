@@ -1,10 +1,17 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { ValidationPipe } from "@nestjs/common";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { join } from "path";
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(3000);
+  app.enableCors();
+  app.setBaseViewsDir(join(__dirname, "..", "views"));
+  app.setViewEngine("ejs");
+  await app.listen(3000, "0.0.0.0", function () {
+    console.log("listening on port 3000");
+  });
 }
 bootstrap();
